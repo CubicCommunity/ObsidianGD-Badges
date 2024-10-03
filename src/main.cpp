@@ -190,7 +190,7 @@ class $modify(Profile, ProfilePage)
 		{
 			geode::createQuickPopup(
 				"OBSIDIAN Director",
-				"This user is a director of <cp>OBSIDIAN</c>. They manage and supervise everything.",
+				"This user is the <cj>director</c> of <cp>OBSIDIAN</c>. They manage and supervise everything.",
 				"OK", "Learn More",
 				[](auto, bool btn2)
 				{
@@ -204,7 +204,7 @@ class $modify(Profile, ProfilePage)
 		{
 			geode::createQuickPopup(
 				"ObsidianGD Manager",
-				"This user is a manager of <cp>ObsidianGD</c>. They manage group projects and collaborations.",
+				"This user is a <cy>manager</c> of <cp>ObsidianGD</c>. They manage group projects and collaborations.",
 				"OK", "Learn More",
 				[](auto, bool btn2)
 				{
@@ -218,7 +218,7 @@ class $modify(Profile, ProfilePage)
 		{
 			geode::createQuickPopup(
 				"ObsidianGD Team Member",
-				"This user is a member of <cp>ObsidianGD</c>. They partake in group projects and collaborations.",
+				"This user is a <cg>member</c> of <cp>ObsidianGD</c>. They partake in group projects and collaborations.",
 				"OK", "Learn More",
 				[](auto, bool btn2)
 				{
@@ -232,7 +232,7 @@ class $modify(Profile, ProfilePage)
 		{
 			geode::createQuickPopup(
 				"OBSIDIAN Manager",
-				"This user is a member of <cp>OBSIDIAN</c>. They manage group projects.",
+				"This user is a <cy>manager</c> of <cp>OBSIDIAN</c>. They manage group projects.",
 				"OK", "Learn More",
 				[](auto, bool btn2)
 				{
@@ -246,7 +246,7 @@ class $modify(Profile, ProfilePage)
 		{
 			geode::createQuickPopup(
 				"OBSIDIAN Crew Member",
-				"This user is a member of <cp>OBSIDIAN</c>. They partake in group content creation.",
+				"This user is a <cg>member</c> of <cp>OBSIDIAN</c>. They partake in group content creation.",
 				"OK", "Learn More",
 				[](auto, bool btn2)
 				{
