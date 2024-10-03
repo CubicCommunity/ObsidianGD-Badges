@@ -13,7 +13,9 @@
 		"Cheeseworks"
 	],
 	"tags": [
-		"interface"
+		"online",
+		"offline",
+		"enhancement"
 	],
 	"description": "Adds a badge to ObsidianGD members' profiles.",
 	"links": {
