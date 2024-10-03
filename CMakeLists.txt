@@ -6,9 +6,12 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(ObsidianGDBadges VERSION 1.0.0)
 
+file(GLOB_RECURSE SOURCES
+    src/*.cpp
+)
+
 add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    # Add any extra C++ source files here
+    ${SOURCES}
 )
 
 if (NOT DEFINED ENV{GEODE_SDK})

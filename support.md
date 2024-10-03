@@ -1,1 +1,2 @@
-Edit this file to change your mod's support info, or delete it if you don't need it.
+# **Visit [ObsidianGD](https://www.obsidianmg.cc/gd-team/)**
+### **[Check Out Our Latest Project!](https://bluewitherer.github.io/InstallOGDPS/ogd-project/)**
