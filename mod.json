@@ -12,6 +12,9 @@
 	"developers": [
 		"Cheeseworks"
 	],
+	"tags": [
+		"interface"
+	],
 	"description": "Adds a badge to ObsidianGD members' profiles.",
 	"links": {
 		"source": "https://github.com/CubicCommunity/ObsidianGD-Badges",
