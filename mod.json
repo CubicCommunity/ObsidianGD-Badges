@@ -1,0 +1,14 @@
+{
+	"geode": "3.8.1",
+	"gd": {
+		"win": "2.206",
+		"android": "2.206",
+		"mac": "2.206",
+		"ios": "2.206"
+	},
+	"id": "cheeseworks.obsidiangd_badges",
+	"name": "ObsidianGD Badges",
+	"version": "v1.0.0",
+	"developer": "Cheeseworks",
+	"description": "Adds a badge to ObsidianGD members' profiles."
+}
