@@ -1,5 +1,5 @@
 ## 1.1.0
-#### Hotfix.
+#### Comment badges and mod settings.
 
 ##### Changes
 - Partial code cleanup

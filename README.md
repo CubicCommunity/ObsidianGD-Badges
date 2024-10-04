@@ -1,4 +1,4 @@
-# ObsidianGDBadges
+# ObsidianGD Badges
 Adds a badge to ObsidianGD members' profiles.
 
 <img src="logo.png" width="150" alt="The mod's logo." />

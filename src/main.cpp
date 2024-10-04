@@ -10,7 +10,6 @@
 
 using namespace geode::prelude;
 
-Badges badgeClass;
 auto getThisMod = geode::getMod();
 
 std::string str404 = "404: Not Found";
