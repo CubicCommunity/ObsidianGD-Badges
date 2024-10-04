@@ -30,9 +30,44 @@
 	},
 	"dependencies": [
 		{
+			"id": "geode.node-ids",
+			"version": "*",
+			"importance": "required"
+		},
+		{
 			"id": "jouca.badgesapi",
 			"version": "*",
 			"importance": "required"
 		}
-	]
+	],
+	"settings": {
+		"display": {
+			"name": "Display",
+			"description": "Customize badge display.",
+			"type": "title"
+		},
+		"show-profile": {
+			"name": "Display On Profile",
+			"description": "Display member badges on the profile page.",
+			"type": "bool",
+			"default": true
+		},
+		"show-comments": {
+			"name": "Display On Comments",
+			"description": "Display member badges on comment cells.",
+			"type": "bool",
+			"default": true
+		},
+		"dev": {
+			"name": "Developers",
+			"description": "Utilities for development purposes.",
+			"type": "title"
+		},
+		"console": {
+			"name": "Log In Console",
+			"description": "Log all mod actions in the console.",
+			"type": "bool",
+			"default": false
+		}
+	}
 }

@@ -22,4 +22,7 @@ public:
     };
 
     static std::map<BadgeID, std::string> getBadgeStringID;
+    static std::map<std::string, std::string> getBadgeSpriteName;
+
+    void setNewBadge(std::string id, cocos2d::CCLayer* mLayer, float size, auto parent);
 };

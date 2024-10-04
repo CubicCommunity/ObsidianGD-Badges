@@ -1,9 +1,18 @@
 ## 1.1.0
-#### Comment badges
+#### Hotfix.
 
-- ![Add Icon](frame:GJ_completesIcon_001.png&scale:0.5) | **Added** comment cell compatibility
+##### Changes
+- Partial code cleanup
+- **Added** comment cell compatibility
+- **Added** mod setting category `Display`
+  - **Added** toggle setting `Display On Profile`
+  - **Added** toggle setting `Display On Comments`
+
+##### Developer
+- **Added** mod setting category `Developers`
+  - **Added** toggle setting `Log In Console`
 
 # 1.0.0
 ### Initial release
 
-- ![Add Icon](frame:GJ_completesIcon_001.png&scale:0.5) | **Added** base remote environment to fetch user badges
+- **Added** base remote environment to fetch user badges
