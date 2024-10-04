@@ -1,4 +1,16 @@
-## 1.1.0
+### v1.1.1
+##### Hotfix.
+
+###### Changes
+- **Fixed** *ObsidianGD Team Member* badge not appearing properly
+
+###### Developer
+- **Added** log event when setting badge texture
+- Unnecessary class functions removed
+
+---
+
+## v1.1.0
 #### Comment badges and mod settings.
 
 ##### Changes
@@ -12,7 +24,10 @@
 - **Added** mod setting category `Developers`
   - **Added** toggle setting `Log In Console`
 
-# 1.0.0
+---
+
+# v1.0.0
 ### Initial release
 
+#### Features
 - **Added** base remote environment to fetch user badges

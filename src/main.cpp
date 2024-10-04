@@ -10,8 +10,10 @@
 
 using namespace geode::prelude;
 
+// its modding time
 auto getThisMod = geode::getMod();
 
+// if user invalid
 std::string str404 = "404: Not Found";
 auto char404 = str404.c_str();
 
@@ -31,9 +33,13 @@ void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto pare
 			alreadyBadge->removeMeAndCleanup();
 		};
 
+		auto newBadge = Badges::getBadgeSpriteName[id].c_str();
+
+		if (getThisMod->getSettingValue<bool>("console")) log::debug("Setting badge to {}...", newBadge);
+
 		if (username_menu)
 		{
-			CCSprite *badgeSprite = CCSprite::create(Badges::getBadgeSpriteName[id].c_str());
+			CCSprite *badgeSprite = CCSprite::create(newBadge);
 			badgeSprite->setScale(size);
 
 			CCMenuItemSpriteExtra *badge = CCMenuItemSpriteExtra::create(
@@ -49,7 +55,7 @@ void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto pare
 	};
 };
 
-// fetch badge locally and remotely
+// attempt fetch badge locally and remotely
 void onCheckForBadge(EventListener<web::WebTask> ogdBadgeRequest, cocos2d::CCLayer *mLayer, float size, auto parent, int accID)
 {
 	auto cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
@@ -77,7 +83,7 @@ void onCheckForBadge(EventListener<web::WebTask> ogdBadgeRequest, cocos2d::CCLay
                 if (ogdWebResultUnwrapped.c_str() == savedString.c_str()) {
                     if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", accID);
                 } else {
-                    getThisMod->setSavedValue(fmt::format("cache-badge-u{}", accID), ogdWebResultUnwrapped);
+                    if (ogdWebResultUnwrapped.c_str() == char404 || ogdWebResultUnwrapped == str404 || ogdWebResultUnwrapped.empty()) getThisMod->setSavedValue(fmt::format("cache-badge-u{}", accID), ogdWebResultUnwrapped);
                     if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResultUnwrapped);
 					
                     setNewBadge(ogdWebResultUnwrapped, mLayer, size, parent);

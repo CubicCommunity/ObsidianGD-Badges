@@ -8,6 +8,7 @@
 
 using namespace geode::prelude;
 
+// badge button event
 void BadgeInfo::onInfoBadge(CCObject *sender)
 {
     auto nodeObject = as<CCNode *>(sender);
