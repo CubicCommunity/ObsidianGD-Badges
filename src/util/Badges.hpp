@@ -3,10 +3,17 @@
 #include <map>
 #include <string>
 
+#include <Geode/Geode.hpp>
+
+#include <Geode/utils/web.hpp>
+
+using namespace geode::prelude;
+
 class Badges
 {
 public:
-    enum class BadgeID {
+    enum class BadgeID
+    {
         Director = 1,
         CrewManager = 2,
         CrewMember = 3,
