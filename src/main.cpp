@@ -1,6 +1,9 @@
 #include "util/Badges.hpp"
 #include "util/BadgeInfo.hpp"
 
+#include <string>
+#include <map>
+
 #include <Geode/Geode.hpp>
 
 #include <Geode/utils/web.hpp>
@@ -13,6 +16,9 @@ using namespace geode::prelude;
 // its modding time
 auto getThisMod = geode::getMod();
 
+// for getting badges
+EventListener<web::WebTask> ogdBadgeRequest;
+
 // if user invalid
 std::string str404 = "404: Not Found";
 auto char404 = str404.c_str();
@@ -22,11 +28,11 @@ void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto pare
 {
 	if (id == str404 || id.c_str() == char404 || id.empty())
 	{
-		return;
+		log::debug("Badge '{}' is invalid.", id.c_str());
 	}
 	else
 	{
-		CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
+		CCMenu *username_menu = as<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
 
 		if (auto alreadyBadge = username_menu->getChildByID(id))
 		{
@@ -35,7 +41,8 @@ void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto pare
 
 		auto newBadge = Badges::getBadgeSpriteName[id].c_str();
 
-		if (getThisMod->getSettingValue<bool>("console")) log::debug("Setting badge to {}...", newBadge);
+		if (getThisMod->getSettingValue<bool>("console"))
+			log::debug("Setting badge to {}...", newBadge);
 
 		if (username_menu)
 		{
@@ -56,37 +63,29 @@ void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto pare
 };
 
 // attempt fetch badge locally and remotely
-void onCheckForBadge(EventListener<web::WebTask> ogdBadgeRequest, cocos2d::CCLayer *mLayer, float size, auto parent, int accID)
+void onCheckForBadge(cocos2d::CCLayer *mLayer, float size, auto parent, int accID)
 {
-	auto cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
+	std::string cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
 	auto badgeCache = cacheStd.c_str();
 
-	if (badgeCache == char404 || cacheStd == str404 || cacheStd.empty())
+	if (cacheStd.empty() || cacheStd == str404)
 	{
-		if (getThisMod->getSettingValue<bool>("console"))
-			log::debug("Badge unavailable.");
-	}
-	else
-	{
-		if (getThisMod->getSettingValue<bool>("console"))
-			log::debug("Fetched badge {} from cache", badgeCache);
-		setNewBadge(cacheStd, mLayer, size, parent);
-	};
-
-	ogdBadgeRequest.bind([parent, mLayer, size, accID](web::WebTask::Event *e)
-						 {
+		ogdBadgeRequest.bind([parent, mLayer, size, accID](web::WebTask::Event *e)
+							 {
 				if (web::WebResponse *ogdReqRes = e->getValue())
 			{
-				std::string ogdWebResultUnwrapped = ogdReqRes->string().unwrapOr("Uh oh!");
+				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("Uh oh!");
 				std::string savedString = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
 
-                if (ogdWebResultUnwrapped.c_str() == savedString.c_str()) {
+				if (getThisMod->getSettingValue<bool>("console")) log::debug("Processing remotely-obtained string '{}'...", ogdWebResUnwr.c_str());
+
+                if (ogdWebResUnwr.c_str() == savedString.c_str()) {
                     if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", accID);
                 } else {
-                    if (ogdWebResultUnwrapped.c_str() == char404 || ogdWebResultUnwrapped == str404 || ogdWebResultUnwrapped.empty()) getThisMod->setSavedValue(fmt::format("cache-badge-u{}", accID), ogdWebResultUnwrapped);
-                    if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResultUnwrapped);
+                    if (ogdWebResUnwr.c_str() == char404 || ogdWebResUnwr == str404 || ogdWebResUnwr.empty()) getThisMod->setSavedValue(fmt::format("cache-badge-u{}", accID), ogdWebResUnwr);
+                    if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResUnwr.c_str());
 					
-                    setNewBadge(ogdWebResultUnwrapped, mLayer, size, parent);
+                    setNewBadge(ogdWebResUnwr, mLayer, size, parent);
                 };
 			}
 			else if (web::WebProgress *p = e->getProgress())
@@ -98,25 +97,28 @@ void onCheckForBadge(EventListener<web::WebTask> ogdBadgeRequest, cocos2d::CCLay
 				if (getThisMod->getSettingValue<bool>("console")) log::debug("The request was cancelled... So sad :(");
 			}; });
 
-	auto ogdReq = web::WebRequest();
-	ogdBadgeRequest.setFilter(ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", (int)accID)));
+		auto ogdReq = web::WebRequest();
+		auto ogdReqGet = ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", accID));
+
+		ogdBadgeRequest.setFilter(ogdReqGet);
+	}
+	else
+	{
+		if (getThisMod->getSettingValue<bool>("console"))
+			log::debug("Fetched badge {} from cache", badgeCache);
+		setNewBadge(cacheStd, mLayer, size, parent);
+	};
 };
 
 class $modify(Profile, ProfilePage)
 {
-	struct Fields
-	{
-		std::string badgeID;
-		EventListener<web::WebTask> ogdBadgeRequest;
-	};
-
 	void loadPageFromUserInfo(GJUserScore * user)
 	{
 		ProfilePage::loadPageFromUserInfo(user);
 
 		if (getThisMod->getSettingValue<bool>("show-profile"))
 		{
-			onCheckForBadge(m_fields->ogdBadgeRequest, m_mainLayer, 0.875f, this, user->m_accountID);
+			onCheckForBadge(m_mainLayer, 0.875f, this, user->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Viewing profile of ID {}", user->m_accountID);
@@ -131,7 +133,7 @@ class $modify(Profile, ProfilePage)
 		}
 		else
 		{
-			CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
+			CCMenu *username_menu = as<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
 
 			if (auto alreadyBadge = username_menu->getChildByID(id))
 			{
@@ -159,12 +161,6 @@ class $modify(Profile, ProfilePage)
 
 class $modify(Comment, CommentCell)
 {
-	struct Fields
-	{
-		std::string badgeID;
-		EventListener<web::WebTask> ogdBadgeRequest;
-	};
-
 	// modified vanilla loadFromComment function
 	void loadFromComment(GJComment * comment)
 	{
@@ -172,7 +168,7 @@ class $modify(Comment, CommentCell)
 
 		if (getThisMod->getSettingValue<bool>("show-comments"))
 		{
-			onCheckForBadge(m_fields->ogdBadgeRequest, m_mainLayer, 0.5f, this, comment->m_accountID);
+			onCheckForBadge(m_mainLayer, 0.5f, this, comment->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Viewing profile of ID {}", comment->m_accountID);

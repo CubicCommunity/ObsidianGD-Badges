@@ -2,6 +2,9 @@
 
 #include "../Badges.hpp"
 
+#include <string>
+#include <map>
+
 #include <Geode/Geode.hpp>
 
 #include <Geode/utils/web.hpp>

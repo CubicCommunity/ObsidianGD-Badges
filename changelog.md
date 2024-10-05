@@ -1,3 +1,14 @@
+### v1.1.2
+##### Hotfix.
+
+###### Changes
+- **Fixed** Android-based issues
+
+###### Developer
+- Unnecessary modified class fields removed
+
+---
+
 ### v1.1.1
 ##### Hotfix.
 

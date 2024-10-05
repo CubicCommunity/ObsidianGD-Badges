@@ -8,7 +8,7 @@
 	},
 	"id": "cheeseworks.obsidiangd_badges",
 	"name": "ObsidianGD Badges",
-	"version": "v1.1.1",
+	"version": "v1.1.2",
 	"developers": [
 		"Cheeseworks"
 	],
@@ -19,9 +19,13 @@
 	],
 	"description": "Adds a badge to ObsidianGD members' profiles.",
 	"links": {
-		"source": "https://github.com/CubicCommunity/ObsidianGD-Badges",
+		"source": "https://github.com/CubicCommunity/ObsidianGD-Badges/",
 		"community": "https://www.discord.com/invite/nhtyT6hDwa",
 		"homepage": "https://www.obsidianmg.cc/gd-team/"
+	},
+	"issues": {
+		"info": "You may report issues with the mod in the ObsidianGD-Badges repository",
+		"url": "https://github.com/CubicCommunity/ObsidianGD-Badges/issues/"
 	},
 	"resources": {
 		"sprites": [
@@ -31,12 +35,12 @@
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
-			"version": "*",
+			"version": ">=1.15.0",
 			"importance": "required"
 		},
 		{
 			"id": "jouca.badgesapi",
-			"version": "*",
+			"version": ">=1.1.0",
 			"importance": "required"
 		}
 	],
