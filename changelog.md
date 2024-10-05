@@ -1,3 +1,16 @@
+### v1.1.3
+##### Hotfix.
+
+###### Changes
+- **Fixed** cache-based vulnerability
+- **Added** mod setting category `Interface`
+  - **Added** toggle setting `Web Error Notifications`
+
+###### Developer
+- Unnecessary modified class functions removed
+
+---
+
 ### v1.1.2
 ##### Hotfix.
 

@@ -3,8 +3,11 @@
 
 #include <string>
 #include <map>
+#include <thread>
 
 #include <Geode/Geode.hpp>
+
+#include <Geode/ui/Notification.hpp>
 
 #include <Geode/utils/web.hpp>
 
@@ -24,68 +27,79 @@ std::string str404 = "404: Not Found";
 auto char404 = str404.c_str();
 
 // create badge button
-void setNewBadge(std::string id, cocos2d::CCLayer *mLayer, float size, auto parent)
+void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer)
 {
-	if (id == str404 || id.c_str() == char404 || id.empty())
+	bool idTest = Badges::getBadgeSpriteName[id].empty();
+
+	if (idTest)
 	{
-		log::debug("Badge '{}' is invalid.", id.c_str());
+		log::debug("Badge id '{}' is invalid.", id.c_str());
 	}
 	else
 	{
-		CCMenu *username_menu = as<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
-
-		if (auto alreadyBadge = username_menu->getChildByID(id))
-		{
-			alreadyBadge->removeMeAndCleanup();
-		};
-
-		auto newBadge = Badges::getBadgeSpriteName[id].c_str();
-
-		if (getThisMod->getSettingValue<bool>("console"))
-			log::debug("Setting badge to {}...", newBadge);
-
 		if (username_menu)
 		{
+			if (auto alreadyBadge = username_menu->getChildByID(id))
+			{
+				alreadyBadge->removeMeAndCleanup();
+			};
+
+			auto newBadge = Badges::getBadgeSpriteName[id].c_str();
+
+			if (getThisMod->getSettingValue<bool>("console"))
+				log::debug("Setting badge to {}...", newBadge);
+
 			CCSprite *badgeSprite = CCSprite::create(newBadge);
 			badgeSprite->setScale(size);
 
 			CCMenuItemSpriteExtra *badge = CCMenuItemSpriteExtra::create(
 				badgeSprite,
-				parent,
+				pointer,
 				menu_selector(BadgeInfo::onInfoBadge));
 			badge->setID(id);
 			badge->setZOrder(1);
 
 			username_menu->addChild(badge);
 			username_menu->updateLayout();
+
+			if (getThisMod->getSettingValue<bool>("console"))
+				log::debug("Badge {} successfully set", newBadge);
 		};
 	};
 };
 
 // attempt fetch badge locally and remotely
-void onCheckForBadge(cocos2d::CCLayer *mLayer, float size, auto parent, int accID)
+void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 {
-	std::string cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
+	std::string cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", (int)accID));
 	auto badgeCache = cacheStd.c_str();
 
-	if (cacheStd.empty() || cacheStd == str404)
-	{
-		ogdBadgeRequest.bind([parent, mLayer, size, accID](web::WebTask::Event *e)
-							 {
-				if (web::WebResponse *ogdReqRes = e->getValue())
+	if (getThisMod->getSettingValue<bool>("console"))
+		log::debug("Revising badge for user {} of ID '{}'...", (int)accID, badgeCache);
+
+	ogdBadgeRequest.bind([pointer, username_menu, size, accID](web::WebTask::Event *e)
+						 {
+			if (web::WebResponse *ogdReqRes = e->getValue())
 			{
 				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("Uh oh!");
-				std::string savedString = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", accID));
+				std::string savedString = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", (int)accID));
 
 				if (getThisMod->getSettingValue<bool>("console")) log::debug("Processing remotely-obtained string '{}'...", ogdWebResUnwr.c_str());
 
                 if (ogdWebResUnwr.c_str() == savedString.c_str()) {
-                    if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", accID);
+                    if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", (int)accID);
                 } else {
-                    if (ogdWebResUnwr.c_str() == char404 || ogdWebResUnwr == str404 || ogdWebResUnwr.empty()) getThisMod->setSavedValue(fmt::format("cache-badge-u{}", accID), ogdWebResUnwr);
-                    if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResUnwr.c_str());
+					bool failed = Badges::getBadgeSpriteName[ogdWebResUnwr].empty();
+                    
+					if (failed) {
+						if (getThisMod->getSettingValue<bool>("console")) log::error("Badge of ID '{}' failed validation test", ogdWebResUnwr.c_str());
+					} else {
+						getThisMod->setSavedValue(fmt::format("cache-badge-u{}", (int)accID), ogdWebResUnwr);
+
+                    	if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResUnwr.c_str());
 					
-                    setNewBadge(ogdWebResUnwr, mLayer, size, parent);
+                    	setNewBadge(ogdWebResUnwr, username_menu, size, pointer);
+					};
                 };
 			}
 			else if (web::WebProgress *p = e->getProgress())
@@ -94,67 +108,44 @@ void onCheckForBadge(cocos2d::CCLayer *mLayer, float size, auto parent, int accI
 			}
 			else if (e->isCancelled())
 			{
-				if (getThisMod->getSettingValue<bool>("console")) log::debug("The request was cancelled... So sad :(");
+				if (getThisMod->getSettingValue<bool>("console")) log::error("Badge web request failed");
+				if (getThisMod->getSettingValue<bool>("err-notifs")) Notification::create("Unable to fetch badge", NotificationIcon::Error, 2.5f)->show();
 			}; });
 
-		auto ogdReq = web::WebRequest();
-		auto ogdReqGet = ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", accID));
+	auto ogdReq = web::WebRequest();
+	ogdBadgeRequest.setFilter(ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", (int)accID)));
 
-		ogdBadgeRequest.setFilter(ogdReqGet);
+	bool isNotCached = Badges::getBadgeSpriteName[cacheStd].empty();
+
+	if (isNotCached)
+	{
+		if (getThisMod->getSettingValue<bool>("console"))
+			log::error("Badge id '{}' from cache is invalid", badgeCache);
 	}
 	else
 	{
 		if (getThisMod->getSettingValue<bool>("console"))
-			log::debug("Fetched badge {} from cache", badgeCache);
-		setNewBadge(cacheStd, mLayer, size, parent);
+			log::debug("Fetched badge id '{}' from cache", badgeCache);
+		setNewBadge(cacheStd, username_menu, size, pointer);
 	};
 };
 
 class $modify(Profile, ProfilePage)
 {
+	// modified vanilla loadPageFromUserInfo function
 	void loadPageFromUserInfo(GJUserScore * user)
 	{
 		ProfilePage::loadPageFromUserInfo(user);
 
 		if (getThisMod->getSettingValue<bool>("show-profile"))
 		{
-			onCheckForBadge(m_mainLayer, 0.875f, this, user->m_accountID);
+			auto mLayer = m_mainLayer;
+			CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
+
+			onCheckForBadge(username_menu, 0.875f, this, user->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Viewing profile of ID {}", user->m_accountID);
-		};
-	};
-
-	void setNewBadge(std::string id, cocos2d::CCLayer * mLayer, float size, auto parent)
-	{
-		if (id.c_str() == char404 || id.empty())
-		{
-			return;
-		}
-		else
-		{
-			CCMenu *username_menu = as<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
-
-			if (auto alreadyBadge = username_menu->getChildByID(id))
-			{
-				alreadyBadge->removeMeAndCleanup();
-			};
-
-			if (username_menu)
-			{
-				CCSprite *badgeSprite = CCSprite::create(Badges::getBadgeSpriteName[id].c_str());
-				badgeSprite->setScale(size);
-
-				CCMenuItemSpriteExtra *badge = CCMenuItemSpriteExtra::create(
-					badgeSprite,
-					parent,
-					menu_selector(BadgeInfo::onInfoBadge));
-				badge->setID(id);
-				badge->setZOrder(1);
-
-				username_menu->addChild(badge);
-				username_menu->updateLayout();
-			};
 		};
 	};
 };
@@ -168,10 +159,13 @@ class $modify(Comment, CommentCell)
 
 		if (getThisMod->getSettingValue<bool>("show-comments"))
 		{
-			onCheckForBadge(m_mainLayer, 0.5f, this, comment->m_accountID);
+			auto mLayer = m_mainLayer;
+			CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
+
+			onCheckForBadge(username_menu, 0.5f, this, comment->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
-				log::debug("Viewing profile of ID {}", comment->m_accountID);
+				log::debug("Viewing comment profile of ID {}", comment->m_accountID);
 		};
 	};
 };

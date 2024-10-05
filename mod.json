@@ -8,7 +8,7 @@
 	},
 	"id": "cheeseworks.obsidiangd_badges",
 	"name": "ObsidianGD Badges",
-	"version": "v1.1.2",
+	"version": "v1.1.3",
 	"developers": [
 		"Cheeseworks"
 	],
@@ -59,6 +59,17 @@
 		"show-comments": {
 			"name": "Display On Comments",
 			"description": "Display member badges on comment cells.",
+			"type": "bool",
+			"default": true
+		},
+		"ui": {
+			"name": "Interface",
+			"description": "UI-related functions.",
+			"type": "title"
+		},
+		"err-notifs": {
+			"name": "Web Error Notifications",
+			"description": "Display a notification when the badge web request fails.",
 			"type": "bool",
 			"default": true
 		},
