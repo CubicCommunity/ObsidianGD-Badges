@@ -12,12 +12,12 @@
 	"developers": [
 		"Cheeseworks"
 	],
+	"description": "Adds a badge to ObsidianGD members' profiles.",
 	"tags": [
 		"online",
 		"offline",
 		"enhancement"
 	],
-	"description": "Adds a badge to ObsidianGD members' profiles.",
 	"links": {
 		"source": "https://github.com/CubicCommunity/ObsidianGD-Badges/",
 		"community": "https://www.discord.com/invite/nhtyT6hDwa",
@@ -44,6 +44,11 @@
 			"importance": "required"
 		}
 	],
+	"api": {
+		"include": [
+			"src/util/*.hpp"
+		]
+	},
 	"settings": {
 		"display": {
 			"name": "Display",
