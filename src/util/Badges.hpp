@@ -1,11 +1,9 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <map>
 
 #include <Geode/Geode.hpp>
-
-#include <Geode/utils/web.hpp>
 
 using namespace geode::prelude;
 
@@ -21,6 +19,8 @@ public:
         TeamMember = 5
     };
 
-    static std::map<BadgeID, std::string> getBadgeStringID;
-    static std::map<std::string, std::string> getBadgeSpriteName;
+    static std::map<BadgeID, std::string> badgeStringID;
+    static std::map<std::string, std::string> badgeSpriteName;
+    
+    void onInfoBadge(CCObject *sender);
 };

@@ -1,3 +1,14 @@
+### v1.1.4
+##### Cleanup.
+
+###### Changes
+- **Added** MacOS compatibility
+
+###### Developer
+- Big code cleanup
+
+---
+
 ### v1.1.3
 ##### Hotfix.
 

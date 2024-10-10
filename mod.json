@@ -8,7 +8,7 @@
 	},
 	"id": "cheeseworks.obsidiangd_badges",
 	"name": "ObsidianGD Badges",
-	"version": "v1.1.3",
+	"version": "v1.1.4",
 	"developers": [
 		"Cheeseworks"
 	],
@@ -19,13 +19,13 @@
 		"enhancement"
 	],
 	"links": {
-		"source": "https://github.com/CubicCommunity/ObsidianGD-Badges/",
+		"source": "https://www.github.com/CubicCommunity/ObsidianGD-Badges/",
 		"community": "https://www.discord.com/invite/nhtyT6hDwa",
 		"homepage": "https://www.obsidianmg.cc/gd-team/"
 	},
 	"issues": {
 		"info": "You may report issues with the mod in the ObsidianGD-Badges repository",
-		"url": "https://github.com/CubicCommunity/ObsidianGD-Badges/issues/"
+		"url": "https://www.github.com/CubicCommunity/ObsidianGD-Badges/issues/"
 	},
 	"resources": {
 		"sprites": [
@@ -44,11 +44,6 @@
 			"importance": "required"
 		}
 	],
-	"api": {
-		"include": [
-			"src/util/*.hpp"
-		]
-	},
 	"settings": {
 		"display": {
 			"name": "Display",

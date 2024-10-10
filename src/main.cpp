@@ -1,5 +1,4 @@
 #include "util/Badges.hpp"
-#include "util/BadgeInfo.hpp"
 
 #include <string>
 #include <map>
@@ -14,6 +13,9 @@
 #include <Geode/modify/ProfilePage.hpp>
 #include <Geode/modify/CommentCell.hpp>
 
+#include <Geode/binding/ProfilePage.hpp>
+#include <Geode/binding/CommentCell.hpp>
+
 using namespace geode::prelude;
 
 // its modding time
@@ -22,16 +24,13 @@ auto getThisMod = geode::getMod();
 // for getting badges
 EventListener<web::WebTask> ogdBadgeRequest;
 
-// if user invalid
-std::string str404 = "404: Not Found";
-auto char404 = str404.c_str();
-
 // create badge button
 void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer)
 {
-	bool idTest = Badges::getBadgeSpriteName[id].empty();
+	// checks the map for this value to see if its invalid
+	bool idFailTest = Badges::badgeSpriteName[id].empty();
 
-	if (idTest)
+	if (idFailTest)
 	{
 		log::debug("Badge id '{}' is invalid.", id.c_str());
 	}
@@ -44,7 +43,8 @@ void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer
 				alreadyBadge->removeMeAndCleanup();
 			};
 
-			auto newBadge = Badges::getBadgeSpriteName[id].c_str();
+			// gets sprite filename
+			auto newBadge = Badges::badgeSpriteName[id].c_str();
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Setting badge to {}...", newBadge);
@@ -55,7 +55,7 @@ void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer
 			CCMenuItemSpriteExtra *badge = CCMenuItemSpriteExtra::create(
 				badgeSprite,
 				pointer,
-				menu_selector(BadgeInfo::onInfoBadge));
+				menu_selector(Badges::onInfoBadge));
 			badge->setID(id);
 			badge->setZOrder(1);
 
@@ -71,12 +71,14 @@ void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer
 // attempt fetch badge locally and remotely
 void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 {
+	// gets locally saved badge id
 	std::string cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", (int)accID));
 	auto badgeCache = cacheStd.c_str();
 
 	if (getThisMod->getSettingValue<bool>("console"))
 		log::debug("Revising badge for user {} of ID '{}'...", (int)accID, badgeCache);
 
+	// web request event
 	ogdBadgeRequest.bind([pointer, username_menu, size, accID](web::WebTask::Event *e)
 						 {
 			if (web::WebResponse *ogdReqRes = e->getValue())
@@ -89,7 +91,7 @@ void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
                 if (ogdWebResUnwr.c_str() == savedString.c_str()) {
                     if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", (int)accID);
                 } else {
-					bool failed = Badges::getBadgeSpriteName[ogdWebResUnwr].empty();
+					bool failed = Badges::badgeSpriteName[ogdWebResUnwr].empty();
                     
 					if (failed) {
 						if (getThisMod->getSettingValue<bool>("console")) log::error("Badge of ID '{}' failed validation test", ogdWebResUnwr.c_str());
@@ -112,10 +114,12 @@ void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 				if (getThisMod->getSettingValue<bool>("err-notifs")) Notification::create("Unable to fetch badge", NotificationIcon::Error, 2.5f)->show();
 			}; });
 
+	// sends the web request
 	auto ogdReq = web::WebRequest();
 	ogdBadgeRequest.setFilter(ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", (int)accID)));
 
-	bool isNotCached = Badges::getBadgeSpriteName[cacheStd].empty();
+	// checks the map with the cache as a key to see if its invalid
+	bool isNotCached = Badges::badgeSpriteName[cacheStd].empty();
 
 	if (isNotCached)
 	{
