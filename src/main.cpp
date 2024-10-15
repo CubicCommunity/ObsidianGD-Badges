@@ -1,8 +1,8 @@
 #include "util/Badges.hpp"
 
 #include <string>
+#include <vector>
 #include <map>
-#include <thread>
 
 #include <Geode/Geode.hpp>
 
@@ -18,13 +18,16 @@
 
 using namespace geode::prelude;
 
-// its modding time
+// its modding time :3
 auto getThisMod = geode::getMod();
 
-// for getting badges
+// array for ppl who've been checked
+std::vector<std::string> checkedUsers;
+
+// for fetching badges remotely
 EventListener<web::WebTask> ogdBadgeRequest;
 
-// create badge button
+// creates badge button
 void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer)
 {
 	// checks the map for this value to see if its invalid
@@ -38,6 +41,7 @@ void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer
 	{
 		if (username_menu)
 		{
+			// prevent dupes
 			if (auto alreadyBadge = username_menu->getChildByID(id))
 			{
 				alreadyBadge->removeMeAndCleanup();
@@ -68,19 +72,42 @@ void setNewBadge(std::string id, CCMenu *username_menu, float size, auto pointer
 	};
 };
 
-// attempt fetch badge locally and remotely
-void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
+// attempts fetch badge locally and remotely
+void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 {
 	// gets locally saved badge id
 	std::string cacheStd = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", (int)accID));
 	auto badgeCache = cacheStd.c_str();
 
 	if (getThisMod->getSettingValue<bool>("console"))
-		log::debug("Revising badge for user {} of ID '{}'...", (int)accID, badgeCache);
+		log::debug("Checking if badge for user {} has been checked...", (int)accID);
 
-	// web request event
-	ogdBadgeRequest.bind([pointer, username_menu, size, accID](web::WebTask::Event *e)
-						 {
+	// look for this in the list of users already checked
+	std::string search = std::to_string(accID);
+	bool checked = false;
+
+	for (const auto &element : checkedUsers)
+	{
+		if (element.c_str() == search.c_str())
+		{
+			checked = true;
+			break;
+		};
+	};
+
+	if (checked)
+	{
+		if (getThisMod->getSettingValue<bool>("console"))
+			log::warn("Badge for user {} already been checked. Fetching badge from cache...", (int)accID);
+	}
+	else
+	{
+		if (getThisMod->getSettingValue<bool>("console"))
+			log::warn("User not checked. Revising badge for user {} of ID '{}'...", (int)accID, badgeCache);
+
+		// web request event
+		ogdBadgeRequest.bind([pointer, username_menu, size, accID, search](web::WebTask::Event *e)
+							 {
 			if (web::WebResponse *ogdReqRes = e->getValue())
 			{
 				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("Uh oh!");
@@ -103,6 +130,10 @@ void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
                     	setNewBadge(ogdWebResUnwr, username_menu, size, pointer);
 					};
                 };
+
+				// save the user id if its set to only check once per web
+				if (getThisMod->getSettingValue<bool>("web-once"))
+				checkedUsers.push_back(search);
 			}
 			else if (web::WebProgress *p = e->getProgress())
 			{
@@ -114,9 +145,10 @@ void onCheckForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 				if (getThisMod->getSettingValue<bool>("err-notifs")) Notification::create("Unable to fetch badge", NotificationIcon::Error, 2.5f)->show();
 			}; });
 
-	// sends the web request
-	auto ogdReq = web::WebRequest();
-	ogdBadgeRequest.setFilter(ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", (int)accID)));
+		// send the web request
+		auto ogdReq = web::WebRequest();
+		ogdBadgeRequest.setFilter(ogdReq.get(fmt::format("https://raw.githubusercontent.com/CubicCommunity/InstallOGDPS/main/data/publicBadges/{}.txt", (int)accID)));
+	};
 
 	// checks the map with the cache as a key to see if its invalid
 	bool isNotCached = Badges::badgeSpriteName[cacheStd].empty();
@@ -143,10 +175,11 @@ class $modify(Profile, ProfilePage)
 
 		if (getThisMod->getSettingValue<bool>("show-profile"))
 		{
+			// gets a copy of the main layer
 			auto mLayer = m_mainLayer;
 			CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
 
-			onCheckForBadge(username_menu, 0.875f, this, user->m_accountID);
+			checkForBadge(username_menu, 0.875f, this, user->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Viewing profile of ID {}", user->m_accountID);
@@ -163,10 +196,11 @@ class $modify(Comment, CommentCell)
 
 		if (getThisMod->getSettingValue<bool>("show-comments"))
 		{
+			// gets a copy of the main layer
 			auto mLayer = m_mainLayer;
 			CCMenu *username_menu = typeinfo_cast<CCMenu *>(mLayer->getChildByIDRecursive("username-menu"));
 
-			onCheckForBadge(username_menu, 0.5f, this, comment->m_accountID);
+			checkForBadge(username_menu, 0.5f, this, comment->m_accountID);
 
 			if (getThisMod->getSettingValue<bool>("console"))
 				log::debug("Viewing comment profile of ID {}", comment->m_accountID);

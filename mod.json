@@ -8,7 +8,7 @@
 	},
 	"id": "cheeseworks.obsidiangd_badges",
 	"name": "ObsidianGD Badges",
-	"version": "v1.1.4",
+	"version": "v1.1.5",
 	"developers": [
 		"Cheeseworks"
 	],
@@ -70,6 +70,17 @@
 		"err-notifs": {
 			"name": "Web Error Notifications",
 			"description": "Display a notification when the badge web request fails.",
+			"type": "bool",
+			"default": true
+		},
+		"data": {
+			"name": "Data",
+			"description": "Functions for storing data.",
+			"type": "title"
+		},
+		"web-once": {
+			"name": "Check Badges Once",
+			"description": "Only send one web request to check a user's badge, instead of checking as much as the rate limit supports.",
 			"type": "bool",
 			"default": true
 		},

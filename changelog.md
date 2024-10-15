@@ -1,3 +1,13 @@
+### v1.1.5
+##### Data storing update.
+
+###### Changes
+- Badges are now optionally checked through web request *once* until game restarts
+- **Added** mod setting category `Data`
+  - **Added** toggle setting `Check Badges Once`
+
+---
+
 ### v1.1.4
 ##### Cleanup.
 
