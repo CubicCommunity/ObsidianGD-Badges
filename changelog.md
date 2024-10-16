@@ -1,7 +1,7 @@
 # What's New
 
 ### v1.1.5
-##### Data storing update.
+##### Data storing.
 
 ###### Changes
 - Badges are now optionally checked through web request *once* until game restarts
@@ -61,13 +61,13 @@
 #### Comment badges and mod settings.
 
 ##### Changes
-- Partial code cleanup
 - **Added** comment cell compatibility
 - **Added** mod setting category `Display`
   - **Added** toggle setting `Display On Profile`
   - **Added** toggle setting `Display On Comments`
 
 ##### Developer
+- Partial code cleanup
 - **Added** mod setting category `Developers`
   - **Added** toggle setting `Log In Console`
 
