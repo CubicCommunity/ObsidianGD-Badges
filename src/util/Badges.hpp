@@ -16,11 +16,12 @@ public:
         CrewManager = 2,
         CrewMember = 3,
         TeamManager = 4,
-        TeamMember = 5
+        TeamMember = 5,
+        Collaborator = 6
     };
 
     static std::map<BadgeID, std::string> badgeStringID;
     static std::map<std::string, std::string> badgeSpriteName;
-    
+
     void onInfoBadge(CCObject *sender);
 };

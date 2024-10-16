@@ -14,14 +14,16 @@ std::map<Badges::BadgeID, std::string> Badges::badgeStringID{
     {Badges::BadgeID::CrewManager, "crew-manager"},
     {Badges::BadgeID::CrewMember, "crew-member"},
     {Badges::BadgeID::TeamManager, "team-manager"},
-    {Badges::BadgeID::TeamMember, "team-member"}};
+    {Badges::BadgeID::TeamMember, "team-member"},
+    {Badges::BadgeID::Collaborator, "collaborator"}};
 
 std::map<std::string, std::string> Badges::badgeSpriteName{
     {Badges::badgeStringID[Badges::BadgeID::Director], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::TeamManager], "team-member.png"_spr},
-    {Badges::badgeStringID[Badges::BadgeID::TeamMember], "team-member.png"_spr}};
+    {Badges::badgeStringID[Badges::BadgeID::TeamMember], "team-member.png"_spr},
+    {Badges::badgeStringID[Badges::BadgeID::Collaborator], "collaborator.png"_spr}};
 
 // badge button event
 void Badges::onInfoBadge(CCObject *sender)
@@ -97,6 +99,34 @@ void Badges::onInfoBadge(CCObject *sender)
                 if (btn2)
                 {
                     web::openLinkInBrowser("https://www.obsidianmg.cc/#crew");
+                };
+            });
+    }
+    else if (badge_ID == Badges::badgeStringID[Badges::BadgeID::Collaborator])
+    {
+        geode::createQuickPopup(
+            "OBSIDIAN Collaborator",
+            "This user is a <cg>collaborator</c> of <cp>OBSIDIAN</c> and/or <cp>ObsidianGD</c>. They've directly worked on the crew's or team's projects as an outsider.",
+            "OK", "Learn More",
+            [](auto, bool btn2)
+            {
+                if (btn2)
+                {
+                    web::openLinkInBrowser("https://www.obsidianmg.cc/#crew");
+                };
+            });
+    }
+    else
+    {
+        geode::createQuickPopup(
+            "Oops!",
+            "This badge has <cr>no available information</c>. This is likely unintentional, please report it as an issue in the mod's repository.",
+            "OK", "Report",
+            [](auto, bool btn2)
+            {
+                if (btn2)
+                {
+                    web::openLinkInBrowser("https://www.github.com/CubicCommunity/ObsidianGD-Badges/issues/");
                 };
             });
     };

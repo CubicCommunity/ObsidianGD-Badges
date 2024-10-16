@@ -111,7 +111,7 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 							 {
 			if (web::WebResponse *ogdReqRes = e->getValue())
 			{
-				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("Uh oh!");
+				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("404: Not Found");
 
 				if (getThisMod->getSettingValue<bool>("console")) log::debug("Processing remotely-obtained string '{}'...", ogdWebResUnwr.c_str());
 
@@ -124,12 +124,12 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 					if (failed) {
 						if (getThisMod->getSettingValue<bool>("console")) log::error("Badge of ID '{}' failed validation test", ogdWebResUnwr.c_str());
 					} else {
-						getThisMod->setSavedValue(fmt::format("cache-badge-u{}", (int)accID), ogdWebResUnwr);
-
                     	if (getThisMod->getSettingValue<bool>("console")) log::debug("Fetched badge {} remotely", ogdWebResUnwr.c_str());
 					
                     	setNewBadge(ogdWebResUnwr, username_menu, size, pointer);
 					};
+					
+					getThisMod->setSavedValue(fmt::format("cache-badge-u{}", (int)accID), ogdWebResUnwr);
                 };
 
 				// save the user id if its set to only check once per web

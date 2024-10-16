@@ -1,5 +1,16 @@
 # What's New
 
+### v1.1.6
+##### Badge additions.
+
+###### Changes
+- **Updated** all badges
+- **Added** `Collaborator` badge
+- **Fixed** issue with previous cache not being removed after the web request confirms user is ineligible for a badge
+- **Added** conditional error popup if a badge has no information about it
+
+---
+
 ### v1.1.5
 ##### Data storing.
 
