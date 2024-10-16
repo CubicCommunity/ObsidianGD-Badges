@@ -88,9 +88,10 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 
 	for (const auto &element : checkedUsers)
 	{
-		if (element.c_str() == search.c_str())
+		if (element == search)
 		{
-			checked = true;
+			// set the bool as the mod setting's value
+			checked = getThisMod->getSettingValue<bool>("web-once");
 			break;
 		};
 	};
@@ -98,7 +99,7 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 	if (checked)
 	{
 		if (getThisMod->getSettingValue<bool>("console"))
-			log::warn("Badge for user {} already been checked. Fetching badge from cache...", (int)accID);
+			log::error("Badge for user {} already been checked. Fetching badge from cache...", (int)accID);
 	}
 	else
 	{
@@ -106,18 +107,18 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 			log::warn("User not checked. Revising badge for user {} of ID '{}'...", (int)accID, badgeCache);
 
 		// web request event
-		ogdBadgeRequest.bind([pointer, username_menu, size, accID, search](web::WebTask::Event *e)
+		ogdBadgeRequest.bind([pointer, username_menu, size, accID, cacheStd, search](web::WebTask::Event *e)
 							 {
 			if (web::WebResponse *ogdReqRes = e->getValue())
 			{
 				std::string ogdWebResUnwr = ogdReqRes->string().unwrapOr("Uh oh!");
-				std::string savedString = getThisMod->getSavedValue<std::string>(fmt::format("cache-badge-u{}", (int)accID));
 
 				if (getThisMod->getSettingValue<bool>("console")) log::debug("Processing remotely-obtained string '{}'...", ogdWebResUnwr.c_str());
 
-                if (ogdWebResUnwr.c_str() == savedString.c_str()) {
+                if (ogdWebResUnwr.c_str() == cacheStd.c_str()) {
                     if (getThisMod->getSettingValue<bool>("console")) log::debug("Badge for user of ID {} up-to-date", (int)accID);
                 } else {
+					// check if badge map key is invalid
 					bool failed = Badges::badgeSpriteName[ogdWebResUnwr].empty();
                     
 					if (failed) {
@@ -133,7 +134,7 @@ void checkForBadge(CCMenu *username_menu, float size, auto pointer, int accID)
 
 				// save the user id if its set to only check once per web
 				if (getThisMod->getSettingValue<bool>("web-once"))
-				checkedUsers.push_back(search);
+					checkedUsers.push_back(search);
 			}
 			else if (web::WebProgress *p = e->getProgress())
 			{
