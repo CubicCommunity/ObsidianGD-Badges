@@ -1,14 +1,14 @@
 {
-	"geode": "3.8.1",
+	"geode": "4.0.0-beta.1",
 	"gd": {
-		"win": "2.206",
-		"android": "2.206",
-		"mac": "2.206",
-		"ios": "2.206"
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
 	},
 	"id": "cheeseworks.obsidiangd_badges",
 	"name": "ObsidianGD Badges",
-	"version": "v1.1.6",
+	"version": "1.1.7",
 	"developers": [
 		"Cheeseworks"
 	],
@@ -35,12 +35,12 @@
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
-			"version": ">=1.15.0",
+			"version": ">=1.17.0",
 			"importance": "required"
 		},
 		{
 			"id": "jouca.badgesapi",
-			"version": ">=1.1.0",
+			"version": ">=1.2.0-beta.1",
 			"importance": "required"
 		}
 	],

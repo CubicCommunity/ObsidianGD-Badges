@@ -1,5 +1,13 @@
 # What's New
 
+### v1.1.7
+##### Loader update.
+
+###### Changes
+- **Updated** Geode compatibility
+
+---
+
 ### v1.1.6
 ##### Badge additions.
 
