@@ -12,6 +12,7 @@ class Badges
 public:
     enum class BadgeID
     {
+        Cubic = 0,
         Director = 1,
         CrewManager = 2,
         CrewMember = 3,

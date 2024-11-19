@@ -10,6 +10,7 @@
 using namespace geode::prelude;
 
 std::map<Badges::BadgeID, std::string> Badges::badgeStringID{
+    {Badges::BadgeID::Cubic, "cubic"},
     {Badges::BadgeID::Director, "director"},
     {Badges::BadgeID::CrewManager, "crew-manager"},
     {Badges::BadgeID::CrewMember, "crew-member"},
@@ -18,6 +19,7 @@ std::map<Badges::BadgeID, std::string> Badges::badgeStringID{
     {Badges::BadgeID::Collaborator, "collaborator"}};
 
 std::map<std::string, std::string> Badges::badgeSpriteName{
+    {Badges::badgeStringID[Badge::BadgeID::Cubic], "cubic-studios.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::Director], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
@@ -32,7 +34,21 @@ void Badges::onInfoBadge(CCObject *sender)
     auto nodeObject = as<CCNode *>(sender);
     auto badge_ID = nodeObject->getID();
 
-    if (badge_ID == Badges::badgeStringID[Badges::BadgeID::Director])
+    if (badge_ID == Badges::badgeStringID[Badges::BadgeID::Cubic])
+    {
+        geode::createQuickPopup(
+            "Cubic Studios",
+            "This user is a <cj>staff member</c> of <cc>Cubic Studios</c>. They partake in the activities of a department of Cubic.",
+            "OK", "Learn More",
+            [](auto, bool btn2)
+            {
+                if (btn2)
+                {
+                    web::openLinkInBrowser("https://www.youtube.com/c/CubicCommunity/");
+                };
+            });
+    }
+    else if (badge_ID == Badges::badgeStringID[Badges::BadgeID::Director])
     {
         geode::createQuickPopup(
             "OBSIDIAN Director",

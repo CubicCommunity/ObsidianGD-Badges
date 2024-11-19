@@ -7,9 +7,9 @@ This mod fetches data for badges remotely from a repository that hosts web resou
 
 ### Badges
 ###### What role each badge represents.
-- ![Icon](cheeseworks.obsidiangd_badges/crew-member.png&scale:0.5) **OBSIDIAN** Crew Member
-- ![Icon](cheeseworks.obsidiangd_badges/team-member.png&scale:0.5) **ObsidianGD** Team Member
-- ![Icon](cheeseworks.obsidiangd_badges/collaborator.png&scale:0.5) Collaborator
+- ![Icon](cheeseworks.obsidiangd_badges/crew-member.png) **OBSIDIAN** Crew Member
+- ![Icon](cheeseworks.obsidiangd_badges/team-member.png) **ObsidianGD** Team Member
+- ![Icon](cheeseworks.obsidiangd_badges/collaborator.png) Collaborator
 
 ### Developers
 ###### This mod is developed and maintained by members of the [ObsidianGD](https://www.obsidianmg.cc/gd-team/#team) team.

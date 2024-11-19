@@ -1,10 +1,11 @@
 # What's New
 
 ### v1.1.7
-##### Loader update.
+##### Mod loader update.
 
 ###### Changes
 - **Updated** Geode compatibility
+- **Added** `Cubic Studios` badge
 
 ---
 
