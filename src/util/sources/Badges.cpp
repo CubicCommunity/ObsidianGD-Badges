@@ -19,7 +19,7 @@ std::map<Badges::BadgeID, std::string> Badges::badgeStringID{
     {Badges::BadgeID::Collaborator, "collaborator"}};
 
 std::map<std::string, std::string> Badges::badgeSpriteName{
-    {Badges::badgeStringID[Badge::BadgeID::Cubic], "cubic-studios.png"_spr},
+    {Badges::badgeStringID[Badges::BadgeID::Cubic], "cubic-studios.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::Director], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
     {Badges::badgeStringID[Badges::BadgeID::CrewManager], "crew-member.png"_spr},
